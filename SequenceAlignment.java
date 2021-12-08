@@ -1,41 +1,33 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class SequenceAlignment {
-    private String modifiedString1;
-    private String modifiedString2;
+
     private HashMap<String, Integer> penaltyMap;
     private int gapValue;
 
-    public SequenceAlignment(HashMap<String, Integer> penaltyMap, int gapValue) {
+    public SequenceAlignment() {
+        HashMap<String, Integer> penaltyMap = new HashMap<>();
+        penaltyMap.put("AA", 0);
+        penaltyMap.put("AC", 110);
+        penaltyMap.put("AG", 48);
+        penaltyMap.put("AT", 94);
+        penaltyMap.put("CA", 110);
+        penaltyMap.put("CC", 0);
+        penaltyMap.put("CG", 118);
+        penaltyMap.put("CT", 48);
+        penaltyMap.put("GA", 48);
+        penaltyMap.put("GC", 118);
+        penaltyMap.put("GG", 0);
+        penaltyMap.put("GT", 110);
+        penaltyMap.put("TA", 94);
+        penaltyMap.put("TC", 48);
+        penaltyMap.put("TG", 110);
+        penaltyMap.put("TT", 0);
         this.penaltyMap = penaltyMap;
-        this.gapValue = gapValue;
-    }
-
-    public String getModifiedString1() {
-        return modifiedString1;
-    }
-
-    public void setModifiedString1(String modifiedString1) {
-        this.modifiedString1 = modifiedString1;
-    }
-
-    public String getModifiedString2() {
-        return modifiedString2;
-    }
-
-    public void setModifiedString2(String modifiedString2) {
-        this.modifiedString2 = modifiedString2;
-    }
-
-    public String generateString(String seq, int[] values) {
-        StringBuilder generatedString = new StringBuilder(seq);
-
-        for (int i = 0; i < values.length; i++) {
-            char[] chArray = generatedString.toString().toCharArray();
-            generatedString.insert(values[i] + 1, chArray, 0, chArray.length);
-        }
-
-        return generatedString.toString();
+        this.gapValue = 30;
     }
 
     public int[][] findMinCostMatrix(String s1, String s2) {
@@ -65,7 +57,7 @@ public class SequenceAlignment {
         return costMatrix;
     }
 
-    public String constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
+    public String[] constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
         int m = s1.length();
         int n = s2.length();
         int i = m;
@@ -104,67 +96,52 @@ public class SequenceAlignment {
             modSecondString.append(s2.charAt(j - 1));
             j--;
         }
+        String[] modifiedSequence = new String[2];
+        modifiedSequence[0] = modFirstString.reverse().toString();
+        modifiedSequence[1] = modSecondString.reverse().toString();
 
-        setModifiedString1(modFirstString.reverse().toString());
-        setModifiedString2(modSecondString.reverse().toString());
-
-        return this.getModifiedString1() + this.getModifiedString2();
+        return modifiedSequence;
     }
 
-    public int[][] memoryEfficientAlignmentForward(String s1, String s2) {
-        int m = s1.length();
-        int n = s2.length();
-        int[][] costMatrix = new int[m + 1][2];
+    public static void main(String[] args) {
+        String[] strings = null;
 
-        for (int i = 0; i <= m; i++) {
-            costMatrix[i][0] = i * gapValue;
-        }
-
-        for (int i = 1; i <= n; i++) {
-            costMatrix[0][1] = i * gapValue;
-            for (int j = 1; j <= m; j++) {
-                String penaltyStr = s1.charAt(j - 1) + "" + s2.charAt(i - 1);
-                costMatrix[j][1] = Math.min(
-                        penaltyMap.get(penaltyStr) + costMatrix[j - 1][0], // replacing
-                        Math.min(gapValue + costMatrix[j - 1][0], gapValue + costMatrix[j][1]) // inserting and deleting
-                );
+        if(args.length>=1) {
+            String inputFileName = args[0];
+            File file = new File(inputFileName);
+            try {
+                strings = StringGenerator.generateStringsFromFile(file);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            long startTime = System.currentTimeMillis();
+
+            SequenceAlignment sequenceAlignment = new SequenceAlignment();
+            int[][] costMatrix = sequenceAlignment.findMinCostMatrix(strings[0], strings[1]);
+            String[] modifiedSequence = sequenceAlignment.constructModifiedSeq(strings[0], strings[1], costMatrix);
+
+            long stopTime = System.currentTimeMillis();
+
+            System.out.println(modifiedSequence[0]);
+            System.out.println(modifiedSequence[1]);
+            System.out.println("Time taken --> " + (stopTime - startTime));
+
+            try {
+                FileWriter fileWriter = new FileWriter("output.txt");
+                fileWriter.write(modifiedSequence[0].substring(0,50) + " " + modifiedSequence[0].substring(modifiedSequence[0].length()-50) + "\n");
+                fileWriter.write(modifiedSequence[1].substring(0,50) + " " + modifiedSequence[1].substring(modifiedSequence[1].length()-50) + "\n");
+                fileWriter.write(String.valueOf(costMatrix[strings[0].length()][strings[1].length()])); //Cost of alignment
+                fileWriter.write("\n"); //Memory
+                fileWriter.write(String.valueOf(stopTime - startTime)); //Time
+                fileWriter.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }        
+
         }
-
-        for (int i = 0; i <= m; i++) {
-            costMatrix[i][0] = costMatrix[i][1];
+        else {
+            System.out.println("Please enter an input filename as an argument");
         }
-
-        return costMatrix;
-    }
-
-    public String dividenConquerSolution(String X, String Y) {
-
-      int m = X.length();
-      int n = Y.length();
-
-      if (m <= 10 || n <= 10) {
-          int[][] costMatrix = findMinCostMatrix(X, Y);
-          return constructModifiedSeq(X, Y, costMatrix);
-      }
-
-      int[][] prefixSeq = memoryEfficientAlignmentForward(X, Y.substring(0, n / 2));
-      int[][] suffixSeq = memoryEfficientAlignmentForward(X, Y.substring(n / 2 + 1, n));
-
-      int posMax = n / 2 - 1;
-      int vMax = prefixSeq[n / 2 - 1][1] + suffixSeq[n / 2 - 1][1];
-
-      for (int i = n / 2; i <= n; i++) {
-          int score = prefixSeq[i][1] + suffixSeq[i][1];
-          if (score > vMax) {
-              vMax = score;
-              posMax = i;
-          }
-      }
-
-      String prefix = dividenConquerSolution(X.substring(1, posMax), Y.substring(1, n / 2));
-      String suffix = dividenConquerSolution(X.substring(posMax, n), Y.substring(n / 2 + 1, n));
-
-      return prefix + suffix;
     }
 }

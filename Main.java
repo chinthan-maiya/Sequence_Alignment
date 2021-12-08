@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main implements Print {
+public class Main {
     public static void main(String[] args) {
         String s1 = "ACTG";
         int[] values1 = {3, 6, 1, 1};

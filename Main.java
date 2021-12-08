@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main {
+public class Main implements Print {
     public static void main(String[] args) {
         String s1 = "ACTG";
         int[] values1 = {3, 6, 1, 1};
@@ -41,8 +41,10 @@ public class Main {
 
         long stopTime = System.currentTimeMillis();
 
-        System.out.println(sequenceAlignment.getModifiedString1());
-        System.out.println(sequenceAlignment.getModifiedString2());
+        System.out.println(sequenceAlignment.getModifiedString1().length());
+        System.out.println(sequenceAlignment.getModifiedString2().length());
         System.out.println("Time taken --> " + (stopTime - startTime));
+
+        System.out.println(sequenceAlignment.dividenConquerSolution(input1, input2).length());
     }
 }

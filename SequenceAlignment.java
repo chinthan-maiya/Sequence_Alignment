@@ -45,11 +45,11 @@ public class SequenceAlignment {
         int[][] costMatrix = new int[m + 1][n + 1];
 
         for (int i = 0; i <= m; i++) {
-            costMatrix[0][i] = i * gapValue;
+            costMatrix[i][0] = i * gapValue;
         }
 
         for (int i = 0; i <= n; i++) {
-            costMatrix[i][0] = i * gapValue;
+            costMatrix[0][i] = i * gapValue;
         }
 
         for (int i = 1; i <= m; i++) {
@@ -67,7 +67,7 @@ public class SequenceAlignment {
         return costMatrix;
     }
 
-    public void constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
+    public String constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
         int m = s1.length();
         int n = s2.length();
         int i = m;
@@ -114,9 +114,11 @@ public class SequenceAlignment {
 
         setModifiedString1(modFirstString.reverse().toString());
         setModifiedString2(modSecondString.reverse().toString());
+
+        return this.getModifiedString1() + this.getModifiedString2();
     }
 
-    public int[][] memoryEfficientAlignment(String s1, String s2) {
+    public int[][] memoryEfficientAlignmentForward(String s1, String s2) {
         int m = s1.length();
         int n = s2.length();
         int[][] costMatrix = new int[m + 1][2];
@@ -128,10 +130,10 @@ public class SequenceAlignment {
         for (int i = 1; i <= n; i++) {
             costMatrix[0][1] = i * gapValue;
             for (int j = 1; j <= m; j++) {
-                String penaltyStr = s1.charAt(i - 1) + "" + s2.charAt(j - 1);
-                costMatrix[i][j] = Math.min(
-                        penaltyMap.get(penaltyStr.toLowerCase()) + costMatrix[i - 1][j - 1], // replacing
-                        Math.min(gapValue + costMatrix[i - 1][j], gapValue + costMatrix[i][j - 1]) // inserting and deleting
+                String penaltyStr = s1.charAt(j - 1) + "" + s2.charAt(i - 1);
+                costMatrix[j][1] = Math.min(
+                        penaltyMap.get(penaltyStr.toLowerCase()) + costMatrix[j - 1][0], // replacing
+                        Math.min(gapValue + costMatrix[j - 1][0], gapValue + costMatrix[j][1]) // inserting and deleting
                 );
             }
         }
@@ -141,5 +143,35 @@ public class SequenceAlignment {
         }
 
         return costMatrix;
+    }
+
+    public String dividenConquerSolution(String X, String Y) {
+
+      int m = X.length();
+      int n = Y.length();
+
+      if (m <= 10 || n <= 10) {
+          int[][] costMatrix = findMinCostMatrix(X, Y);
+          return constructModifiedSeq(X, Y, costMatrix);
+      }
+
+      int[][] prefixSeq = memoryEfficientAlignmentForward(X, Y.substring(0, n / 2));
+      int[][] suffixSeq = memoryEfficientAlignmentForward(X, Y.substring(n / 2 + 1, n));
+
+      int posMax = n / 2 - 1;
+      int vMax = prefixSeq[n / 2 - 1][1] + suffixSeq[n / 2 - 1][1];
+
+      for (int i = n / 2; i <= n; i++) {
+          int score = prefixSeq[i][1] + suffixSeq[i][1];
+          if (score > vMax) {
+              vMax = score;
+              posMax = i;
+          }
+      }
+
+      String prefix = dividenConquerSolution(X.substring(1, posMax), Y.substring(1, n / 2));
+      String suffix = dividenConquerSolution(X.substring(posMax, n), Y.substring(n / 2 + 1, n));
+
+      return prefix + suffix;
     }
 }

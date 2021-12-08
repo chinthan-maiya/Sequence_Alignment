@@ -105,6 +105,7 @@ public class SequenceAlignment {
 
     public static void main(String[] args) {
         String[] strings = null;
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
 
         if(args.length>=1) {
             String inputFileName = args[0];
@@ -122,18 +123,18 @@ public class SequenceAlignment {
             String[] modifiedSequence = sequenceAlignment.constructModifiedSeq(strings[0], strings[1], costMatrix);
 
             long stopTime = System.currentTimeMillis();
+            double timeTaken = (stopTime - startTime) / 1000.0;
 
-            System.out.println(modifiedSequence[0]);
-            System.out.println(modifiedSequence[1]);
-            System.out.println("Time taken --> " + (stopTime - startTime));
+            long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            double actualMemUsed = (afterUsedMem - beforeUsedMem) / 1000;
 
             try {
                 FileWriter fileWriter = new FileWriter("output.txt");
                 fileWriter.write(modifiedSequence[0].substring(0,50) + " " + modifiedSequence[0].substring(modifiedSequence[0].length()-50) + "\n");
                 fileWriter.write(modifiedSequence[1].substring(0,50) + " " + modifiedSequence[1].substring(modifiedSequence[1].length()-50) + "\n");
-                fileWriter.write(String.valueOf(costMatrix[strings[0].length()][strings[1].length()])); //Cost of alignment
-                fileWriter.write("\n"); //Memory
-                fileWriter.write(String.valueOf(stopTime - startTime)); //Time
+                fileWriter.write(String.valueOf(costMatrix[strings[0].length()][strings[1].length()]) + "\n"); //Cost of alignment
+                fileWriter.write(String.valueOf(actualMemUsed) + "\n"); //Memory
+                fileWriter.write(String.valueOf(timeTaken)); //Time
                 fileWriter.close();
             } catch (IOException e1) {
                 e1.printStackTrace();

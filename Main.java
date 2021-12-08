@@ -9,22 +9,22 @@ public class Main {
         int[] values2 = {1, 2, 9, 2};
 
         HashMap<String, Integer> penaltyMap = new HashMap<>();
-        penaltyMap.put("aa", 0);
-        penaltyMap.put("ac", 110);
-        penaltyMap.put("ag", 48);
-        penaltyMap.put("at", 94);
-        penaltyMap.put("ca", 110);
-        penaltyMap.put("cc", 0);
-        penaltyMap.put("cg", 118);
-        penaltyMap.put("ct", 48);
-        penaltyMap.put("ga", 48);
-        penaltyMap.put("gc", 118);
-        penaltyMap.put("gg", 0);
-        penaltyMap.put("gt", 110);
-        penaltyMap.put("ta", 94);
-        penaltyMap.put("tc", 48);
-        penaltyMap.put("tg", 110);
-        penaltyMap.put("tt", 0);
+        penaltyMap.put("AA", 0);
+        penaltyMap.put("AC", 110);
+        penaltyMap.put("AG", 48);
+        penaltyMap.put("AT", 94);
+        penaltyMap.put("CA", 110);
+        penaltyMap.put("CC", 0);
+        penaltyMap.put("CG", 118);
+        penaltyMap.put("CT", 48);
+        penaltyMap.put("GA", 48);
+        penaltyMap.put("GC", 118);
+        penaltyMap.put("GG", 0);
+        penaltyMap.put("GT", 110);
+        penaltyMap.put("TA", 94);
+        penaltyMap.put("TC", 48);
+        penaltyMap.put("TG", 110);
+        penaltyMap.put("TT", 0);
 
         int gapValue = 30;
 

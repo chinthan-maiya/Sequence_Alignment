@@ -56,7 +56,7 @@ public class SequenceAlignment {
             for (int j = 1; j <= n; j++) {
                 String penaltyStr = s1.charAt(i - 1) + "" + s2.charAt(j - 1);
                 costMatrix[i][j] = Math.min(
-                        penaltyMap.get(penaltyStr.toLowerCase()) + costMatrix[i - 1][j - 1], // replacing
+                        penaltyMap.get(penaltyStr) + costMatrix[i - 1][j - 1], // replacing
                         Math.min(gapValue + costMatrix[i - 1][j], gapValue + costMatrix[i][j - 1]) // inserting and deleting
                 );
             }
@@ -76,7 +76,7 @@ public class SequenceAlignment {
 
         while (!(i == 0 || j == 0)) {
             String penaltyStr = s1.charAt(i - 1) + "" + s2.charAt(j - 1);
-            int penaltyValue = penaltyMap.get(penaltyStr.toLowerCase());
+            int penaltyValue = penaltyMap.get(penaltyStr);
             if (costMatrix[i - 1][j - 1] + penaltyValue == costMatrix[i][j]) {
                 modFirstString.append(s1.charAt(i - 1));
                 modSecondString.append(s2.charAt(j - 1));
@@ -125,7 +125,7 @@ public class SequenceAlignment {
             for (int j = 1; j <= m; j++) {
                 String penaltyStr = s1.charAt(j - 1) + "" + s2.charAt(i - 1);
                 costMatrix[j][1] = Math.min(
-                        penaltyMap.get(penaltyStr.toLowerCase()) + costMatrix[j - 1][0], // replacing
+                        penaltyMap.get(penaltyStr) + costMatrix[j - 1][0], // replacing
                         Math.min(gapValue + costMatrix[j - 1][0], gapValue + costMatrix[j][1]) // inserting and deleting
                 );
             }

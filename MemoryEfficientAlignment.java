@@ -1,7 +1,5 @@
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class MemoryEfficientAlignment {
     private HashMap<String, Integer> penaltyMap;
@@ -106,23 +104,27 @@ public class MemoryEfficientAlignment {
         return modifiedSequence;
     }
 
-    public int[] memoryEfficientAlignmentForward(String s1, String s2) {
-        int m = s1.length();
-        int n = s2.length();
+    public int[] memoryEfficientAlignmentForward(String X, String Y) {
+        int m = X.length();
+        int n = Y.length();
+
         int[][] costMatrix = new int[2][m + 1];
 
         for (int i = 0; i <= m; i++) {
             costMatrix[0][i] = i * gapValue;
         }
 
-        for (int i = 1; i <= n; i++) {
-            costMatrix[1][0] = i * gapValue;
-            for (int j = 1; j <= m; j++) {
-                String penaltyStr = s1.charAt(j - 1) + "" + s2.charAt(i - 1);
-                costMatrix[1][j] = Math.min(
-                        penaltyMap.get(penaltyStr) + costMatrix[0][j - 1], // replacing
-                        Math.min(gapValue + costMatrix[0][j - 1], gapValue + costMatrix[1][j]) // inserting and deleting
-                );
+        for (int j = 1; j <= n; j++) {
+            costMatrix[1][0] = j * gapValue;
+            for (int i = 1; i <= m; i++) {
+                String penaltyStr = X.charAt(i - 1) + "" + Y.charAt(j - 1);
+                costMatrix[1][i] = Math.min(
+                        penaltyMap.get(penaltyStr) + costMatrix[0][i - 1],
+                        Math.min(
+                                gapValue + costMatrix[1][i - 1],
+                                gapValue + costMatrix[0][i]
+                        )
+                    );
             }
 
             for (int k = 0; k <= m; k++) {
@@ -148,7 +150,7 @@ public class MemoryEfficientAlignment {
                 Z = Z + X.charAt(i);
                 W = W + "_";
             }
-        } else if (X.length() <= 2 || Y.length() <= 2) {
+        } else if (X.length() < 2 || Y.length() < 2) {
             int[][] costMatrix = findMinCostMatrix(X, Y);
             String[] result = constructModifiedSeq(X, Y, costMatrix);
             Z = result[0];
@@ -165,10 +167,10 @@ public class MemoryEfficientAlignment {
             int[] suffixScore = memoryEfficientAlignmentForward(xRev, yRev.substring(yMid + 1, yLen));
 
             int xMid = 0;
-            int vMin = prefixScore[0] + suffixScore[0];
+            int vMin = prefixScore[0] + suffixScore[suffixScore.length - 1];
 
             for (int i = 0; i <= X.length(); i++) {
-                int score = prefixScore[i] + suffixScore[i];
+                int score = prefixScore[i] + suffixScore[suffixScore.length - i - 1];
                 if (score < vMin) {
                     vMin = score;
                     xMid = i;
@@ -178,13 +180,13 @@ public class MemoryEfficientAlignment {
             P.add(new int[]{xMid, yMid});
 
             String[] prefix = divdeAndConquer(X.substring(0, xMid), Y.substring(0, yMid));
-            String[] suffix = divdeAndConquer(X.substring(xMid + 1, xLen), Y.substring(yMid + 1, yLen));
+            String[] suffix = divdeAndConquer(X.substring(xMid), Y.substring(yMid));
 
             Z = prefix[0] + suffix[0];
             W = prefix[1] + suffix[1];
 
-            inputModSeq1.append(Z);
-            inputModSeq2.append(W);
+            res[0] = Z;
+            res[1] = W;
         }
 
         res[0] = Z;

@@ -6,9 +6,10 @@ import java.util.List;
 public class MemoryEfficientAlignment {
     private HashMap<String, Integer> penaltyMap;
     private int gapValue;
-    String inputModSeq1;
-    String inputModSeq2;
+    StringBuilder inputModSeq1 = new StringBuilder();
+    StringBuilder inputModSeq2 = new StringBuilder();
     List<int[]> P = new ArrayList<>();
+    String[] modifiedSeq = new String[]{"", ""};
 
     public MemoryEfficientAlignment() {
         HashMap<String, Integer> penaltyMap = new HashMap<>();
@@ -30,8 +31,6 @@ public class MemoryEfficientAlignment {
         penaltyMap.put("TT", 0);
         this.penaltyMap = penaltyMap;
         this.gapValue = 30;
-        inputModSeq1 = "";
-        inputModSeq2 = "";
     }
 
     public int[][] findMinCostMatrix(String s1, String s2) {
@@ -61,7 +60,7 @@ public class MemoryEfficientAlignment {
         return costMatrix;
     }
 
-    public String constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
+    public String[] constructModifiedSeq(String s1, String s2, int[][] costMatrix) {
         int m = s1.length();
         int n = s2.length();
         int i = m;
@@ -104,7 +103,7 @@ public class MemoryEfficientAlignment {
         modifiedSequence[0] = modFirstString.reverse().toString();
         modifiedSequence[1] = modSecondString.reverse().toString();
 
-        return modifiedSequence[0] + " " + modifiedSequence[1];
+        return modifiedSequence;
     }
 
     public int[] memoryEfficientAlignmentForward(String s1, String s2) {
@@ -134,41 +133,64 @@ public class MemoryEfficientAlignment {
         return costMatrix[1];
     }
 
-    public String divdeAndConquer(String X, String Y) {
-        int a = 0;
-        int b = X.length();
-        int c = 0;
-        int d = Y.length();
+    public String[] divdeAndConquer(String X, String Y) {
+        String Z = "";
+        String W = "";
+        String[] res = new String[2];
 
-        if (X.length() < 10 || Y.length() < 10) {
+        if (X.length() == 0) {
+            for (int i = 0; i < Y.length(); i++) {
+                Z = Z + "_";
+                W = W + Y.charAt(i);
+            }
+        } else if (Y.length() == 0) {
+            for (int i = 0; i < X.length(); i++) {
+                Z = Z + X.charAt(i);
+                W = W + "_";
+            }
+        } else if (X.length() <= 2 || Y.length() <= 2) {
             int[][] costMatrix = findMinCostMatrix(X, Y);
-            return constructModifiedSeq(X, Y, costMatrix);
+            String[] result = constructModifiedSeq(X, Y, costMatrix);
+            Z = result[0];
+            W = result[1];
         } else {
-            int mid = d / 2;
+            int xLen = X.length();
+            int yLen = Y.length();
+            int yMid = yLen / 2;
+
             String xRev = (new StringBuilder(X)).reverse().toString();
             String yRev = (new StringBuilder(Y)).reverse().toString();
 
-            int[] prefixScore = memoryEfficientAlignmentForward(X, Y.substring(c, mid));
-            int[] suffixScore = memoryEfficientAlignmentForward(xRev, yRev.substring(mid + 1, d));
+            int[] prefixScore = memoryEfficientAlignmentForward(X, Y.substring(0, yMid));
+            int[] suffixScore = memoryEfficientAlignmentForward(xRev, yRev.substring(yMid + 1, yLen));
 
-            int posMax = 0;
-            int vMax = prefixScore[0] + suffixScore[0];
+            int xMid = 0;
+            int vMin = prefixScore[0] + suffixScore[0];
 
-            for (int i = a; i <= b; i++) {
+            for (int i = 0; i <= X.length(); i++) {
                 int score = prefixScore[i] + suffixScore[i];
-                if (score < vMax) {
-                    vMax = score;
-                    posMax = i;
+                if (score < vMin) {
+                    vMin = score;
+                    xMid = i;
                 }
             }
-            
-            P.add(new int[]{posMax, mid});
 
-            String prefix = divdeAndConquer(X.substring(a, posMax), Y.substring(c, mid));
-            String suffix = divdeAndConquer(X.substring(posMax + 1, b), Y.substring(mid + 1, d));
+            P.add(new int[]{xMid, yMid});
 
-            return prefix + " " + suffix;
+            String[] prefix = divdeAndConquer(X.substring(0, xMid), Y.substring(0, yMid));
+            String[] suffix = divdeAndConquer(X.substring(xMid + 1, xLen), Y.substring(yMid + 1, yLen));
+
+            Z = prefix[0] + suffix[0];
+            W = prefix[1] + suffix[1];
+
+            inputModSeq1.append(Z);
+            inputModSeq2.append(W);
         }
+
+        res[0] = Z;
+        res[1] = W;
+
+        return res;
     }
 
     public static void main(String[] args) {
@@ -180,7 +202,7 @@ public class MemoryEfficientAlignment {
             try {
                 strings = StringGenerator.generateStringsFromFile(file);
                 MemoryEfficientAlignment memoryEfficientAlignment = new MemoryEfficientAlignment();
-                String s = memoryEfficientAlignment.divdeAndConquer(strings[0], strings[1]);
+                String[] s = memoryEfficientAlignment.divdeAndConquer(strings[0], strings[1]);
 
                 System.out.println(strings[0]);
                 System.out.println(memoryEfficientAlignment.inputModSeq1);

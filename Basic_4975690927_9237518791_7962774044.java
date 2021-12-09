@@ -1,15 +1,14 @@
 import java.io.File;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
 
-public class MemoryEfficientAlignment {
+public class Basic_4975690927_9237518791_7962774044 {
+
     private HashMap<String, Integer> penaltyMap;
     private int gapValue;
-    StringBuilder inputModSeq1 = new StringBuilder();
-    StringBuilder inputModSeq2 = new StringBuilder();
-    List<int[]> P = new ArrayList<>();
-    String[] modifiedSeq = new String[]{"", ""};
 
-    public MemoryEfficientAlignment() {
+    public Basic_4975690927_9237518791_7962774044() {
         HashMap<String, Integer> penaltyMap = new HashMap<>();
         penaltyMap.put("AA", 0);
         penaltyMap.put("AC", 110);
@@ -104,118 +103,49 @@ public class MemoryEfficientAlignment {
         return modifiedSequence;
     }
 
-    public int[] memoryEfficientAlignmentForward(String X, String Y) {
-        int m = X.length();
-        int n = Y.length();
-
-        int[][] costMatrix = new int[2][m + 1];
-
-        for (int i = 0; i <= m; i++) {
-            costMatrix[0][i] = i * gapValue;
-        }
-
-        for (int j = 1; j <= n; j++) {
-            costMatrix[1][0] = j * gapValue;
-            for (int i = 1; i <= m; i++) {
-                String penaltyStr = X.charAt(i - 1) + "" + Y.charAt(j - 1);
-                costMatrix[1][i] = Math.min(
-                        penaltyMap.get(penaltyStr) + costMatrix[0][i - 1],
-                        Math.min(
-                                gapValue + costMatrix[1][i - 1],
-                                gapValue + costMatrix[0][i]
-                        )
-                    );
-            }
-
-            for (int k = 0; k <= m; k++) {
-                costMatrix[0][k] = costMatrix[1][k];
-            }
-        }
-
-        return costMatrix[1];
-    }
-
-    public String[] divdeAndConquer(String X, String Y) {
-        String Z = "";
-        String W = "";
-        String[] res = new String[2];
-
-        if (X.length() == 0) {
-            for (int i = 0; i < Y.length(); i++) {
-                Z = Z + "_";
-                W = W + Y.charAt(i);
-            }
-        } else if (Y.length() == 0) {
-            for (int i = 0; i < X.length(); i++) {
-                Z = Z + X.charAt(i);
-                W = W + "_";
-            }
-        } else if (X.length() < 2 || Y.length() < 2) {
-            int[][] costMatrix = findMinCostMatrix(X, Y);
-            String[] result = constructModifiedSeq(X, Y, costMatrix);
-            Z = result[0];
-            W = result[1];
-        } else {
-            int xLen = X.length();
-            int yLen = Y.length();
-            int yMid = yLen / 2;
-
-            String xRev = (new StringBuilder(X)).reverse().toString();
-            String yRev = (new StringBuilder(Y)).reverse().toString();
-
-            int[] prefixScore = memoryEfficientAlignmentForward(X, Y.substring(0, yMid));
-            int[] suffixScore = memoryEfficientAlignmentForward(xRev, yRev.substring(yMid + 1, yLen));
-
-            int xMid = 0;
-            int vMin = prefixScore[0] + suffixScore[suffixScore.length - 1];
-
-            for (int i = 0; i <= X.length(); i++) {
-                int score = prefixScore[i] + suffixScore[suffixScore.length - i - 1];
-                if (score < vMin) {
-                    vMin = score;
-                    xMid = i;
-                }
-            }
-
-            P.add(new int[]{xMid, yMid});
-
-            String[] prefix = divdeAndConquer(X.substring(0, xMid), Y.substring(0, yMid));
-            String[] suffix = divdeAndConquer(X.substring(xMid), Y.substring(yMid));
-
-            Z = prefix[0] + suffix[0];
-            W = prefix[1] + suffix[1];
-
-            res[0] = Z;
-            res[1] = W;
-        }
-
-        res[0] = Z;
-        res[1] = W;
-
-        return res;
-    }
-
     public static void main(String[] args) {
         String[] strings = null;
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
 
         if(args.length>=1) {
             String inputFileName = args[0];
             File file = new File(inputFileName);
             try {
                 strings = StringGenerator.generateStringsFromFile(file);
-                MemoryEfficientAlignment memoryEfficientAlignment = new MemoryEfficientAlignment();
-                String[] s = memoryEfficientAlignment.divdeAndConquer(strings[0], strings[1]);
-
-                System.out.println(strings[0]);
-                System.out.println(memoryEfficientAlignment.inputModSeq1);
-
-                System.out.println(strings[1]);
-                System.out.println(memoryEfficientAlignment.inputModSeq2);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
+
+            long startTime = System.currentTimeMillis();
+
+            Basic_4975690927_9237518791_7962774044 sequenceAlignment = new Basic_4975690927_9237518791_7962774044();
+            int[][] costMatrix = sequenceAlignment.findMinCostMatrix(strings[0], strings[1]);
+            String[] modifiedSequence = sequenceAlignment.constructModifiedSeq(strings[0], strings[1], costMatrix);
+
+            long stopTime = System.currentTimeMillis();
+            double timeTaken = (stopTime - startTime) / 1000.0;
+
+            long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            double actualMemUsed = (afterUsedMem - beforeUsedMem) / 1000;
+
+            try {
+                FileWriter fileWriter = new FileWriter("output.txt");
+                int l1 = Math.min(modifiedSequence[0].length(), 50);
+                int l2 = Math.min(modifiedSequence[1].length(), 50);
+                int k1 = Math.max(0, modifiedSequence[0].length()-50);
+                int k2 = Math.max(0, modifiedSequence[1].length()-50);
+                fileWriter.write(modifiedSequence[0].substring(0,l1) + " " + modifiedSequence[0].substring(k1) + "\n");
+                fileWriter.write(modifiedSequence[1].substring(0,l2) + " " + modifiedSequence[1].substring(k2) + "\n");
+                fileWriter.write(String.valueOf(costMatrix[strings[0].length()][strings[1].length()]) + "\n"); //Cost of alignment
+                fileWriter.write(String.valueOf(actualMemUsed) + "\n"); //Memory
+                fileWriter.write(String.valueOf(timeTaken)); //Time
+                fileWriter.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }        
+
+        }
+        else {
             System.out.println("Please enter an input filename as an argument");
         }
     }

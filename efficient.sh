@@ -1,2 +1,0 @@
-javac MemoryEfficientAlignment.java
-java MemoryEfficientAlignment input1.txt

@@ -1,12 +1,17 @@
 Contributions:
 
 1. 4975690927 (Ravish Kalapanahally Gurusiddappa):
+    * Implemented Basic version finding minimum cost matrix logic.
+    * Implemented Divide and conquer algorithm for efficient version.
+    * Debugged and verified both the algorithms using test inputs. 
 
 2. 9237518791 (Vaibhav Melinamani):
+    * Implemented Modified String Sequence Construction logic.
+    * Contributed to error handling and code refactoring.
+    * Tested code for multiple input sizes.
 
 3. 7962774044 (Chinthan Maiya Uppunda):
-    * Implemented string generation logic
-    * Added file handling logic
+    * Implemented string generation and file handling logic
     * Implemented memory efficient forward alignment algorithm and fixed issues occurring in
       both the algorithms
     * Added code to calculate CPU time and memory used by the algorithms
@@ -40,5 +45,5 @@ Analysis:
 Thus, the observation is that for smaller input sizes, the basic version is good enough in terms of
 both time and space.
 But, if the strings are very large and we have constraints on the amount of memory to be used, the
-efficient version is best to use, because it uses much less memory with atmost a constant factor
+efficient version is best to use, because it uses much less memory with at most a constant factor
 addition to time.

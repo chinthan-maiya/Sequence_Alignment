@@ -7,6 +7,9 @@ Contributions:
     * Debugged and verified both the algorithms using test inputs. 
 
 2. 9237518791 (Vaibhav Melinamani):
+    * Implemented Modified String Sequence Construction logic.
+    * Contributed to error handling and code refactoring.
+    * Tested code for multiple input sizes.
 
 3. 7962774044 (Chinthan Maiya Uppunda):
     * Implemented string generation logic

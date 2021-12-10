@@ -1,6 +1,10 @@
 Contributions:
 
 1. 4975690927 (Ravish Kalapanahally Gurusiddappa):
+    * Implemented Basic version finding minimum cost matrix logic.
+    * Implemented Divide and conquer algorithm memory efficient version.
+    * Construction of modified strings in the memory efficient version.
+    * Debugged and verified both the algorithms using test inputs. 
 
 2. 9237518791 (Vaibhav Melinamani):
 

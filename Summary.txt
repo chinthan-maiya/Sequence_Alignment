@@ -46,10 +46,5 @@ Analysis:
 Thus, the observation is that for smaller input sizes, the basic version is good enough in terms of
 both time and space.
 But, if the strings are very large and we have constraints on the amount of memory to be used, the
-<<<<<<< HEAD
-efficient version is best to use, because it uses much less memory with at most a constant factor
-addition to time.
-=======
 efficient version is best to use, because it uses much less memory with atmost a constant factor
 addition to time.
->>>>>>> 7ba237ba89217488d6ca1d089335d18166d734a6

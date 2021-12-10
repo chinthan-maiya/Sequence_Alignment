@@ -7,7 +7,7 @@ Contributions:
 3. 7962774044 (Chinthan Maiya Uppunda):
     * Implemented string generation logic
     * Added file handling logic
-    * Implemented memory efficient forward alignment algorithm and fixed issues occuring in
+    * Implemented memory efficient forward alignment algorithm and fixed issues occurring in
       both the algorithms
     * Added code to calculate CPU time and memory used by the algorithms
     * Ran tests and generated plots using matplotlib

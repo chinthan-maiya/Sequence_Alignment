@@ -1,0 +1,44 @@
+Contributions:
+
+1. 4975690927 (Ravish Kalapanahally Gurusiddappa):
+
+2. 9237518791 (Vaibhav Melinamani):
+
+3. 7962774044 (Chinthan Maiya Uppunda):
+    * Implemented string generation logic
+    * Added file handling logic
+    * Implemented memory efficient forward alignment algorithm and fixed issues occuring in
+      both the algorithms
+    * Added code to calculate CPU time and memory used by the algorithms
+    * Ran tests and generated plots using matplotlib
+    * Created report and included analysis, observations
+
+
+Analysis:
+
+1. CPU Time:
+   Both the basic and the efficient versions of Sequence Alignment take O(m*n) amount of time to 
+   generate the alignment, where m and n are the lengths of the 2 strings involved. Hence we can see that 
+   the 2 lines in CPUPlot.png grow at a comparable rate with only a constant difference. The 2 algorithms
+   have the same theoretical time complexity and perform similarly with respect to execution time
+   as the size of input grows. The efficient version adds atmost a constant factor of time to the basic
+   version.
+
+2. Memory:
+   The basic version has O(m*n) space complexity, whereas it is O(m+n) for the efficient version.
+   However, for smaller input sizes, we do not see much difference and in some cases, the basic version 
+   could perform better too, as we can see in MemorytPlot.png
+   But as the size of input grows, the basic version tends to grow at a rapid rate and we see a huge
+   difference in memory consumption between the 2 algorithms.
+   The efficient version grows at a very small rate and tends to look like a straight line with a very
+   small slope.
+   This is because, the basic version creates and updates an array of size m*n, which makes the space
+   complexity O(m*n)
+   The efficient version, on the other hand, makes use of an array of size O(m) and reuses this space 
+   in successive recursive calls. Thus the space complexity reduces considerably and becomes O(m+n).
+
+Thus, the observation is that for smaller input sizes, the basic version is good enough in terms of
+both time and space.
+But, if the strings are very large and we have constraints on the amount of memory to be used, the
+efficient version is best to use, because it uses much less memory with atmost a constant factor
+addition to time.

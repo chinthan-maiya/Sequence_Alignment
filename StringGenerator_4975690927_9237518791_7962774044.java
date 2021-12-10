@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringGenerator {
+public class StringGenerator_4975690927_9237518791_7962774044 {
 
     public static String generateString(String baseString, List<Integer> indices) {
         StringBuilder string = new StringBuilder(baseString);

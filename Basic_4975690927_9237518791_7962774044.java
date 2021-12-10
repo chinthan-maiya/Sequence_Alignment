@@ -111,7 +111,7 @@ public class Basic_4975690927_9237518791_7962774044 {
             String inputFileName = args[0];
             File file = new File(inputFileName);
             try {
-                strings = StringGenerator.generateStringsFromFile(file);
+                strings = StringGenerator_4975690927_9237518791_7962774044.generateStringsFromFile(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
